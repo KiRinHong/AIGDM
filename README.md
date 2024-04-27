@@ -18,11 +18,11 @@ Here are brief descriptions for each folder, detailed explanations are commented
 * a folder named **Simulation**, which contains the simulation shell scripts and R scripts.
   - **ProposedModel**: Type1 and Power simulations.
   - realpara_gdmNlnm.R and realpara_utility.R: Generate the para.Rdata, which is used as a basis in the simulation.
-  - generateTxt.R: Generate the input.txt, which is used in simulation.
+  - generateTxt.R: Generate the input.txt, which is different scenario used in simulation.
 
 ## R Package
 
-The proposed method **AIGDM** in the paper is implemented in the Analysis/1a.AIGDM_utility.R, will be incoporated in the R pacakge miLineage in the future.
+The proposed method **AIGDM** in the paper is implemented in the Analysis/1a.AIGDM_utility.R, will be incoporated in the R pacakge [miLineage](https://github.com/tangzheng1/tanglab/blob/gh-pages/software/miLineage_v3.1.zip) in the future.
 
 ## Contact
 
