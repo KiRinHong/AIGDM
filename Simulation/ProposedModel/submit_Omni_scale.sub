@@ -1,0 +1,33 @@
+#universe = vanilla
+#+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/kirinhong/r421:AZIGDM"
+
+container_image = osdf:///chtc/staging/qhong8/AIGDM-sim-container.sif
+#container_image = my-container.sif
+
+# docker pull opensciencegrid/osgvo-el8:latest
+log = logs/job.$(ClusterId).$(ProcId).log
+error = logs/job.$(ClusterId).$(ProcId).stderr
+output = logs/job.$(ClusterId).$(ProcId).stdout
+
+#Requirements = (Target.HasCHTCStaging == true)
+
++WantFlocking = true
+#+WantGlideIn = true
+executable = run_Omni_scale.sh
+arguments = $(test) $(mod) $(sim) $(r) $(T)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = shared/,input_add.txt
+transfer_output_files = $(outfile)
+transfer_output_remaps = "$(outfile)=results_omni_final/$(outfile)"
+max_idle = 2000
+
+periodic_hold = ((CurrentTime - EnteredCurrentStatus) > 900) && (TransferringInput == True)
+periodic_release = (JobStatus == 5) && ((CurrentTime - EnteredCurrentStatus) > 180) && (JobRunCount < 10) && ((HoldReasonCode == 13) || (HoldReasonCode == 3) || (HoldReasonCode == 35))
+
+request_cpus = 1
+request_memory = 2GB
+request_disk = 2GB
+
+queue test,mod,sim,r,T,outfile from input.txt
