@@ -70,19 +70,19 @@ summary(tmp_rslt_zigdm)
 pdf("../Figs/ZI_diagnostic_GDM_NullModel.pdf", width = 20, height = 15)
 ggplot(tmp_rslt_zigdm, aes(x=Correlation, y=ZICheck*100, group=interaction(TaxaID, ZIReal))) +
   geom_line(aes(color=TaxaID, linetype=ZIReal), linewidth = 2) +
-  geom_point(aes(color = TaxaID)) +
+  # geom_point(aes(color = TaxaID)) +
   facet_grid(T ~ ModelSim) +
   scale_linetype_manual(values = 1:2, 
-                        guide = guide_legend(order = 1, title = "Classification task",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 2, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Classification task",title.theme = element_text(face = "bold", size = 33, angle = 0),
+                                             label.theme = element_text(size = 33, angle = 0), nrow = 2, byrow= TRUE)) +
   scale_color_manual(values = c("#1f78b4", "#33a02c", "#e31a1c", "#984ea3", "#ff7f00"),
-                     guide = guide_legend(order = 2, title = "Taxa ID",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 2, byrow= TRUE)) +
+                     guide = guide_legend(order = 2, title = "Taxa ID",title.theme = element_text(face = "bold", size = 33, angle = 0),
+                                          label.theme = element_text(size = 33, angle = 0), nrow = 2, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(breaks = seq(0, 100, 20)) +
   labs(title = "", y="% correct classification", x="Correlation") +
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"),
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(2.5,"cm"),
         axis.title = element_text(face = "bold",size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
         axis.title.x = element_text(vjust = -0.2),
@@ -146,23 +146,23 @@ p1 <- ggplot(tmp_long[tmp_long$TestAP == "Asym" ,],
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(limits = c(0.2, 1.8), breaks = seq(0.2, 1.8, 0.2)) +
   labs(title = "Asymptotic test", y="Type 1 error / 0.05", x="Correlation") + # / 0.05
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -184,23 +184,23 @@ p2 <- ggplot(tmp_long[tmp_long$TestAP == "Perm" ,],
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(limits = c(0.2, 1.8), breaks = seq(0.2, 1.8, 0.2)) +
   labs(title = "Permutation test", y="Type 1 error / 0.05", x="Correlation") + # / 0.05
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -266,23 +266,23 @@ p1 <- ggplot(tmp_long[tmp_long$TestAP == "Asym" ,],
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(limits = c(0.2, 1.8), breaks = seq(0.2, 1.8, 0.2)) +
   labs(title = "Asymptotic test", y="Type 1 error / 0.05", x="Correlation") + # / 0.05
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -304,23 +304,23 @@ p2 <- ggplot(tmp_long[tmp_long$TestAP == "Perm" ,],
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(limits = c(0.2, 1.8), breaks = seq(0.2, 1.8, 0.2)) +
   labs(title = "Permutation test", y="Type 1 error / 0.05", x="Correlation") + # / 0.05
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -379,23 +379,23 @@ p1 <- ggplot(tmp_long[tmp_long$Test == 1 ,], # & tmp_long$TestType == "Different
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(breaks = seq(0, 1, 0.2)) +
   labs(title = "Differential mean model", y="Power", x="Correlation") + 
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -415,23 +415,23 @@ p2 <- ggplot(tmp_long[tmp_long$Test == 2 ,], # & tmp_long$TestType == "Different
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(breaks = seq(0, 1, 0.2)) +
   labs(title = "Differential dispersion model", y="Power", x="Correlation") + 
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -490,23 +490,23 @@ p1 <- ggplot(tmp_long[tmp_long$Test == 1 ,], # & tmp_long$TestType == "Different
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(breaks = seq(0, 1, 0.2)) +
   labs(title = "Differential mean model", y="Power", x="Correlation") + 
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -526,23 +526,23 @@ p2 <- ggplot(tmp_long[tmp_long$Test == 2 ,], # & tmp_long$TestType == "Different
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method", title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_color_manual(values = c("AIGDM" = "#e41a1c", "ZIGDM" = "#984ea3", "GDM" = "#377eb8", "DM" = "#4daf4a", "QCATC1" = "#999999", "QCATC2" = "#ff7f00"),
                      breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                      labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), drop = FALSE,
-                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                          label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                     guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                          label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_linetype_manual(values = c("AIGDM" = 1, "ZIGDM" = 3, "GDM" = 2, "DM" = 1, "QCATC1" = 1, "QCATC2" = 1),
                         breaks = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"),
                         labels = c("AIGDM", "GDM", "ZIGDM", "DM", "QCATC1", "QCATC2"), 
-                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 25, angle = 0),
-                                             label.theme = element_text(size = 25, angle = 0), nrow = 1, byrow= TRUE)) +
+                        guide = guide_legend(order = 1, title = "Method",title.theme = element_text(face = "bold", size = 36, angle = 0),
+                                             label.theme = element_text(size = 36, angle = 0), nrow = 1, byrow= TRUE)) +
   scale_x_continuous(breaks = seq(0, 0.8, 0.2)) +
   scale_y_continuous(breaks = seq(0, 1, 0.2)) +
   labs(title = "Differential dispersion model", y="Power", x="Correlation") + 
-  theme_bw(base_size = 12) +
-  theme(legend.key.width = unit(2,"cm"), 
+  theme_bw(base_size = 18) +
+  theme(legend.key.width = unit(3,"cm"), 
         plot.title = element_text(face = "bold", size = rel(3), hjust = 0.5),
         axis.title = element_text(face = "bold", size = rel(2)),
         axis.title.y = element_text(angle = 90, vjust =2),
@@ -557,5 +557,3 @@ p2
 pdf("../Figs/Power_meanNdisp_T20_Omni.pdf", width = 35, height = 20)
 ggarrange(p1, p2, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
 dev.off()
-
-
