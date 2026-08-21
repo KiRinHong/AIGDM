@@ -1702,7 +1702,7 @@ AIGDM.Cluster <- function(ID, OTU, X, X.index, period = NULL, corstr = "GIC", Ta
   }
   stat.sum = sum(stat)
   df.sum = sum(df)
-  pval = 1 - pchisq(stat.sum, df.sum)
+  pval = pchisq(stat.sum, df.sum, lower.tail = F)
   return(list(stat.sum = stat.sum, pval.sum = pval, stat = stat))
 }
 
@@ -1816,7 +1816,7 @@ AIGDM.Cluster <- function(ID, OTU, X, X.index, period = NULL, corstr = "GIC", Ta
   }
   stat.sum = sum(stat)
   df.sum = sum(df)
-  pval = 1 - pchisq(stat.sum, df.sum)
+  pval = pchisq(stat.sum, df.sum, lower.tail = F)
   return(list(stat.sum = stat.sum, pval.sum = pval, stat = stat))
 }
 
@@ -1923,7 +1923,7 @@ AIGDM.Cluster <- function(ID, OTU, X, X.index, period = NULL, corstr = "GIC", Ta
   }
   stat.sum = sum(stat)
   df.sum = sum(df)
-  pval = 1 - pchisq(stat.sum, df.sum)
+  pval = pchisq(stat.sum, df.sum, lower.tail = F)
   return(list(stat.sum = stat.sum, pval.sum = pval, stat = stat))
 }
 
