@@ -131,10 +131,10 @@ rslt.DMC <- DM.Cluster(ID = id, Y = Y.m, case = exposure.vec, Tax = tax, min.dep
 message("#### DMC done ####")
 
 ## ---- assemble + save results --------------------------------------
-rslt.Ecam.full.delivery.wconf <- list(
+rslt.Ecam.full.delivery.woconf <- list(
   AIGDMC = rslt.AIGDMC, GDMC = rslt.GDMC, ZIGDMC = rslt.ZIGDMC, DMC = rslt.DMC,
   QCATC1 = rslt.QCATC1, QCATC2 = rslt.QCATC2)
-save(rslt.Ecam.full.delivery.wconf,
+save(rslt.Ecam.full.delivery.woconf,
      file = file.path(OUT_DIR, "ECAM.full.rslt.delivery.woconf.omni.avg_dec.corr_str.rda"))
 
 ## ---- GIC selection tables (CSV deliverables) ----------------------
