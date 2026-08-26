@@ -324,6 +324,26 @@ library(extraDistr)
   return(Y)
 }
 
+.simCount.ZIGDM.spikeinLastTaxon <- function(Z.mat, SeqDepth, val_times){
+  #Z.mat = Z.datalist$TimePoint2; SeqDepth = 1e3
+  P = matrix(NA, nrow = nrow(Z.mat), ncol = ncol(Z.mat)+1)
+  for (j in 1:(ncol(P)-1)) {
+    P[,j] = Z.mat[,j]*rowProds(1 - Z.mat[,0:(j-1), drop = FALSE])
+  }
+  P[, ncol(P)] =  1 - rowSums(P[, -ncol(P), drop = FALSE])
+  P[P < 0] = 0
+  
+  P[, ncol(P)] = P[, ncol(P)] * val_times
+  P = P/rowSums(P)
+  
+  Y = c()
+  for (i in 1:nrow(Z.mat)) {
+    Y = rbind(Y, t(rmultinom(1, rpois(1, SeqDepth), P[i,]))) # high zero-inflation level --> -2.22e-16
+  }
+  return(Y)
+}
+
+
 .simCount.OIGDM <- function(Z.mat, SeqDepth){
   #Z.mat = Z.datalist$TimePoint2; SeqDepth = 1e3
   P = matrix(NA, nrow = nrow(Z.mat), ncol = ncol(Z.mat)+1)
@@ -415,7 +435,167 @@ library(extraDistr)
       out[tt,] = tmp/(sum(tmp)+1)
     }
   }
-  return(cbind(out, 1-rowSums(out))) 
+  P = cbind(out, 1-rowSums(out))
+  P[P<0] = 0
+  
+  return(P)
+}
+.corrData.ZINormal.spikeinLastTaxon <- function(zim, mm, varm, normal.corr, TT.corr, val_times){
+  # zim = pstr.mat[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
+  #                  idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20),]
+  # mm = mu.mat[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
+  #               idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20),]
+  # varm = var.mat[idx1,]
+  n.T = nrow(mm); K = ncol(mm) # K
+  phi.mn = kronecker(TT.corr, normal.corr)
+  phi.mn = .cor2cov(phi.mn, sqrt(kronecker(rep(1, n.T), varm)) )
+  tmp = exp( mvrnorm(1, mu=as.numeric(t(mm)), Sigma=phi.mn )  )
+  mln = matrix(tmp, nrow=n.T, byrow=TRUE)
+  Delta = matrix(NA, n.T, K)
+  for(j in 1:K){
+    normalvars =  mvrnorm(1, mu=rep(0,n.T), Sigma=TT.corr)
+    for(tt in 1:n.T){
+      Delta[tt,j] = qbinom(pnorm(normalvars[tt]), 1, zim[tt,j])
+    }
+  }
+  out = matrix(0, nrow=n.T, ncol=K)
+  for(tt in 1:n.T){
+    if(sum( 1-Delta[tt,])!=0 ){
+      tmp = (1-Delta[tt,])*mln[tt,]
+      out[tt,] = tmp/(sum(tmp)+1)
+    }
+  }
+  P = cbind(out, 1-rowSums(out))
+  P[P<0] = 0
+  
+  P[, ncol(P)] = P[, ncol(P)] * val_times
+  P = P/rowSums(P)
+  
+  return(P)
+}
+
+.simCount.ZILN.spikeinLastTaxon <- function(mu.mat, var.mat, pstr.mat, normal.corr, n.T, r, SeqDepth, val_times){
+  # var.TT = normal.var.TT; SeqDepth = 1000
+  n = nrow(mu.mat)
+  N = n/n.T
+  
+  TT.corr = matrix(r, nrow=n.T, ncol=n.T) + diag(n.T)*(1-r)
+  
+  idx1 = 1
+  idx2 = N+1
+  idx3 = 2*N+1
+  idx4 = 3*N+1
+  idx5 = 4*N+1
+  
+  Y1 = Y2 = Y3 = Y4 = Y5 = NULL
+  for(i in 1:N){
+    P = .corrData.ZINormal.spikeinLastTaxon(pstr.mat[c(idx1,idx2,idx3,idx4,idx5),], 
+                           mu.mat[c(idx1,idx2,idx3,idx4,idx5),], 
+                           var.mat[idx1,], normal.corr, TT.corr, val_times[c(idx1,idx2,idx3,idx4,idx5)]) 
+    tmp = NULL
+    for(t in 1:n.T){
+      tmp = rbind(tmp, as.numeric( rmultinom(1, rpois(1, SeqDepth), P[t,] ) )  )
+    }
+    Y1 = rbind(Y1, tmp[1,]) 
+    Y2 = rbind(Y2, tmp[2,])
+    Y3 = rbind(Y3, tmp[3,])
+    Y4 = rbind(Y4, tmp[4,])
+    Y5 = rbind(Y5, tmp[5,])
+    idx1 = idx1 + 1
+    idx2 = idx2 + 1
+    idx3 = idx3 + 1
+    idx4 = idx4 + 1
+    idx5 = idx5 + 1
+  }
+  Y = rbind(Y1, Y2, Y3, Y4, Y5)
+  return(Y)  
+}
+
+.simCount.ZILN.diab.spikeinLastTaxon <- function(mu.mat, var.mat, pstr.mat, normal.corr, n.T, r, SeqDepth, val_times){
+  # normal.corr = cor.real; SeqDepth = 1000
+  n = nrow(mu.mat)
+  N = n/n.T
+  
+  TT.corr = matrix(r, nrow=n.T, ncol=n.T) + diag(n.T)*(1-r)
+  
+  idx1 = 1
+  idx2 = N+1
+  idx3 = 2*N+1
+  idx4 = 3*N+1
+  idx5 = 4*N+1
+  idx6 = 5*N+1
+  idx7 = 6*N+1
+  idx8 = 7*N+1
+  idx9 = 8*N+1
+  idx10 = 9*N+1
+  idx11 = 10*N+1
+  idx12 = 11*N+1
+  idx13 = 12*N+1
+  idx14 = 13*N+1
+  idx15 = 14*N+1
+  idx16 = 15*N+1
+  idx17 = 16*N+1
+  idx18 = 17*N+1
+  idx19 = 18*N+1
+  idx20 = 19*N+1
+  
+  Y1 = Y2 = Y3 = Y4 = Y5 = Y6 = Y7 = Y8 = Y9 = Y10 = 
+    Y11 = Y12 = Y13 = Y14 = Y15 = Y16 = Y17 = Y18 = Y19 = Y20 = NULL
+  for(i in 1:N){
+    P = .corrData.ZINormal.spikeinLastTaxon(pstr.mat[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
+                                      idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20),], 
+                           mu.mat[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
+                                    idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20),], 
+                           var.mat[idx1,], normal.corr, TT.corr, val_times[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
+                                                                             idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20)]) 
+    tmp = NULL
+    for(t in 1:n.T){
+      tmp = rbind(tmp, as.numeric( rmultinom(1, rpois(1, SeqDepth), P[t,] ) )  )
+    }
+    Y1 = rbind(Y1, tmp[1,]) 
+    Y2 = rbind(Y2, tmp[2,])
+    Y3 = rbind(Y3, tmp[3,])
+    Y4 = rbind(Y4, tmp[4,])
+    Y5 = rbind(Y5, tmp[5,])
+    Y6 = rbind(Y6, tmp[6,]) 
+    Y7 = rbind(Y7, tmp[7,])
+    Y8 = rbind(Y8, tmp[8,])
+    Y9 = rbind(Y9, tmp[9,])
+    Y10 = rbind(Y10, tmp[10,])
+    Y11 = rbind(Y11, tmp[11,]) 
+    Y12 = rbind(Y12, tmp[12,])
+    Y13 = rbind(Y13, tmp[13,])
+    Y14 = rbind(Y14, tmp[14,])
+    Y15 = rbind(Y15, tmp[15,])
+    Y16 = rbind(Y16, tmp[16,]) 
+    Y17 = rbind(Y17, tmp[17,])
+    Y18 = rbind(Y18, tmp[18,])
+    Y19 = rbind(Y19, tmp[19,])
+    Y20 = rbind(Y20, tmp[20,])
+    idx1 = idx1 + 1
+    idx2 = idx2 + 1
+    idx3 = idx3 + 1
+    idx4 = idx4 + 1
+    idx5 = idx5 + 1
+    idx6 = idx6 + 1
+    idx7 = idx7 + 1
+    idx8 = idx8 + 1
+    idx9 = idx9 + 1
+    idx10 = idx10 + 1
+    idx11 = idx11 + 1
+    idx12 = idx12 + 1
+    idx13 = idx13 + 1
+    idx14 = idx14 + 1
+    idx15 = idx15 + 1
+    idx16 = idx16 + 1
+    idx17 = idx17 + 1
+    idx18 = idx18 + 1
+    idx19 = idx19 + 1
+    idx20 = idx20 + 1
+  }
+  Y = rbind(Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10,
+            Y11, Y12, Y13, Y14, Y15, Y16, Y17, Y18, Y19, Y20)
+  return(Y)  
 }
 
 .simCount.ZILN <- function(mu.mat, var.mat, pstr.mat, normal.corr, n.T, r, SeqDepth){
@@ -436,7 +616,6 @@ library(extraDistr)
     P = .corrData.ZINormal(pstr.mat[c(idx1,idx2,idx3,idx4,idx5),], 
                            mu.mat[c(idx1,idx2,idx3,idx4,idx5),], 
                            var.mat[idx1,], normal.corr, TT.corr) 
-    P[P<0] = 0
     tmp = NULL
     for(t in 1:n.T){
       tmp = rbind(tmp, as.numeric( rmultinom(1, rpois(1, SeqDepth), P[t,] ) )  )
@@ -492,7 +671,6 @@ library(extraDistr)
                            mu.mat[c(idx1,idx2,idx3,idx4,idx5,idx6,idx7,idx8,idx9,idx10,
                                     idx11,idx12,idx13,idx14,idx15,idx16,idx17,idx18,idx19,idx20),], 
                            var.mat[idx1,], normal.corr, TT.corr) 
-    P[P<0] = 0
     tmp = NULL
     for(t in 1:n.T){
       tmp = rbind(tmp, as.numeric( rmultinom(1, rpois(1, SeqDepth), P[t,] ) )  )
@@ -605,10 +783,10 @@ AIGDM_GEE.Cluster <- function(ID, Y, Xa, Xb, X.index, W = NULL, model = "AZIGDM"
     asym.zero = .score_test_zero(ID, W, X.index, Y, est.para.lst, zi.id)
     stat.zero.sum = asym.zero$stat.sum
     pval.zero.a = asym.zero$pval
-
+    
     pval.omni.c.a = .ACAT(c(pval.zero.a, pval.mean.a, pval.disp.a))
     # pval.omni.m.a = 1 - pchisq(sum(stat.zero.sum, stat.mean.sum, stat.disp.sum), length(zi.id) + K*2)
-
+    
   }else{
     pval.zero.a = NA
     pval.omni.c.a = .ACAT(c(pval.mean.a, pval.disp.a))
@@ -1429,6 +1607,83 @@ AIGDM_GEE.Cluster <- function(ID, Y, Xa, Xb, X.index, W = NULL, model = "AZIGDM"
 #   return(mod.sel)
 # }
 
+.logit_inv <- function(x) 1 / (1 + exp(-x))
+.log_bb <- function(y, m, a, b) {
+  # log choose(m,y)
+  lchoose_part <- lgamma(m + 1) - lgamma(y + 1) - lgamma(m - y + 1)
+  # log B(y+a, m-y+b) - log B(a,b)
+  lB_num <- lgamma(y + a) + lgamma(m - y + b) - lgamma(m + a + b)
+  lB_den <- lgamma(a) + lgamma(b) - lgamma(a + b)
+  lchoose_part + lB_num - lB_den
+}
+
+# .BB.log.lik <- function(Y){ # fit beta-binomial with intercept only
+#   X = matrix(1, nrow(Y), 1)
+#   alpha0 = beta0 = matrix(0.001, 1, 1)
+#   y.ori = Y[,1]
+#   m.ori = rowSums(Y)
+#   
+#   # BB Model
+#   gamma0 = matrix(-Inf, 1, 1)
+#   gdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
+#   mu = exp(X %*% gdm.reg$alpha.est) / (1 + exp(X %*% gdm.reg$alpha.est))
+#   phi = exp(X %*% gdm.reg$beta.est) / (1 + exp(X %*% gdm.reg$beta.est))
+#   a.mat = pmax(mu * (1/phi - 1), 0)  #  conditional assignments with pmax
+#   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
+#   
+#   a = a.mat[,1]
+#   b = b.mat[,1]
+#   ans = sum( lgamma(m.ori + 1) + lgamma(a + b) - lgamma(a) - lgamma(b) - 
+#                lgamma(a + m.ori + b) + lgamma(y.ori + a) + lgamma(m.ori - y.ori + b) - 
+#                lgamma(y.ori + 1) - lgamma(m.ori - y.ori + 1) )
+#   return(list(ans = ans, a.mat = a.mat, b.mat = b.mat))
+# }
+# 
+# .BBnZIBB.log.lik <- function(Y){ # fit both beta-binomial and zero-inflated beta-binomial with intercept only
+#   X = matrix(1, nrow(Y), 1)
+#   alpha0 = beta0 = matrix(0.001, 1, 1)
+#   y.ori = Y[,1]
+#   m.ori = rowSums(Y)
+#   
+#   # BB Model
+#   gamma0 = matrix(-Inf, 1, 1)
+#   gdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
+#   mu = exp(X %*% gdm.reg$alpha.est) / (1 + exp(X %*% gdm.reg$alpha.est))
+#   phi = exp(X %*% gdm.reg$beta.est) / (1 + exp(X %*% gdm.reg$beta.est))
+#   a.mat = pmax(mu * (1/phi - 1), 0)  #  conditional assignments with pmax
+#   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
+#   
+#   a = a.mat[,1]
+#   b = b.mat[,1]
+#   bb.ans = sum( lgamma(m.ori + 1) + lgamma(a + b) - lgamma(a) - lgamma(b) - 
+#                   lgamma(a + m.ori + b) + lgamma(y.ori + a) + lgamma(m.ori - y.ori + b) - 
+#                   lgamma(y.ori + 1) - lgamma(m.ori - y.ori + 1) )
+#   
+#   # ZIBB Model
+#   gamma0 = matrix(0.001, 1, 1)
+#   zigdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
+#   mu = exp(X %*% zigdm.reg$alpha.est) / (1 + exp(X %*% zigdm.reg$alpha.est))
+#   phi = exp(X %*% zigdm.reg$beta.est) / (1 + exp(X %*% zigdm.reg$beta.est))
+#   a.mat = pmax(mu * (1/phi - 1), 0)
+#   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
+#   
+#   a.ori = a.mat[,1]
+#   b.ori = b.mat[,1]
+#   id.sel = which(y.ori > 0)
+#   y = y.ori[id.sel]
+#   a = a.ori[id.sel]
+#   b = b.ori[id.sel]
+#   m = m.ori[id.sel]
+#   
+#   logA = lgamma(a+m+b) + lgamma(b)
+#   logB = lgamma(a+b) + lgamma(m+b)
+#   zibb.ans = sum( - log(pmax(1 - exp(logB - logA), .Machine$double.eps)) - logA + lgamma(m+1) +  # Prevent potential numerical underflow
+#                     lgamma(y+a) + lgamma(m-y+b) + lgamma(a+b) - lgamma(y+1) -
+#                     lgamma(m-y+1) - lgamma(a) )
+#   
+#   return(list(bb.ans = bb.ans, zibb.ans = zibb.ans))
+# }
+
 .BB.log.lik <- function(Y){ # fit beta-binomial with intercept only
   X = matrix(1, nrow(Y), 1)
   alpha0 = beta0 = matrix(0.001, 1, 1)
@@ -1438,16 +1693,14 @@ AIGDM_GEE.Cluster <- function(ID, Y, Xa, Xb, X.index, W = NULL, model = "AZIGDM"
   # BB Model
   gamma0 = matrix(-Inf, 1, 1)
   gdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
-  mu = exp(X %*% gdm.reg$alpha.est) / (1 + exp(X %*% gdm.reg$alpha.est))
-  phi = exp(X %*% gdm.reg$beta.est) / (1 + exp(X %*% gdm.reg$beta.est))
+  mu = .logit_inv(X %*% gdm.reg$alpha.est) 
+  phi = .logit_inv(X %*% gdm.reg$beta.est)
   a.mat = pmax(mu * (1/phi - 1), 0)  #  conditional assignments with pmax
   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
   
   a = a.mat[,1]
   b = b.mat[,1]
-  ans = sum( lgamma(m.ori + 1) + lgamma(a + b) - lgamma(a) - lgamma(b) - 
-               lgamma(a + m.ori + b) + lgamma(y.ori + a) + lgamma(m.ori - y.ori + b) - 
-               lgamma(y.ori + 1) - lgamma(m.ori - y.ori + 1) )
+  ans = sum(.log_bb(y.ori, m.ori, a, b))
   return(list(ans = ans, a.mat = a.mat, b.mat = b.mat))
 }
 
@@ -1460,38 +1713,41 @@ AIGDM_GEE.Cluster <- function(ID, Y, Xa, Xb, X.index, W = NULL, model = "AZIGDM"
   # BB Model
   gamma0 = matrix(-Inf, 1, 1)
   gdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
-  mu = exp(X %*% gdm.reg$alpha.est) / (1 + exp(X %*% gdm.reg$alpha.est))
-  phi = exp(X %*% gdm.reg$beta.est) / (1 + exp(X %*% gdm.reg$beta.est))
+  mu = .logit_inv(X %*% gdm.reg$alpha.est) 
+  phi = .logit_inv(X %*% gdm.reg$beta.est) 
   a.mat = pmax(mu * (1/phi - 1), 0)  #  conditional assignments with pmax
   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
   
   a = a.mat[,1]
   b = b.mat[,1]
-  bb.ans = sum( lgamma(m.ori + 1) + lgamma(a + b) - lgamma(a) - lgamma(b) - 
-                  lgamma(a + m.ori + b) + lgamma(y.ori + a) + lgamma(m.ori - y.ori + b) - 
-                  lgamma(y.ori + 1) - lgamma(m.ori - y.ori + 1) )
+  bb.ans = sum(.log_bb(y.ori, m.ori, a, b))
   
   # ZIBB Model
   gamma0 = matrix(0.001, 1, 1)
   zigdm.reg = .AIGDM_EM(Y = Y, W = X, Xa = X, Xb = X, gamma0 = gamma0, alpha0 = alpha0, beta0 = beta0)
-  mu = exp(X %*% zigdm.reg$alpha.est) / (1 + exp(X %*% zigdm.reg$alpha.est))
-  phi = exp(X %*% zigdm.reg$beta.est) / (1 + exp(X %*% zigdm.reg$beta.est))
+  mu = .logit_inv(X %*% zigdm.reg$alpha.est) 
+  phi = .logit_inv(X %*% zigdm.reg$beta.est) 
+  pi = .logit_inv(X %*% zigdm.reg$gamma.est)
   a.mat = pmax(mu * (1/phi - 1), 0)
   b.mat = pmax((1 - mu) * (1/phi - 1), 0)
   
-  a.ori = a.mat[,1]
-  b.ori = b.mat[,1]
-  id.sel = which(y.ori > 0)
-  y = y.ori[id.sel]
-  a = a.ori[id.sel]
-  b = b.ori[id.sel]
-  m = m.ori[id.sel]
+  a = a.mat[,1]
+  b = b.mat[,1]
+  logP0 = .log_bb(0, m.ori, a, b)
+  lbb_y = .log_bb(y.ori, m.ori, a, b)
   
-  logA = lgamma(a+m+b) + lgamma(b)
-  logB = lgamma(a+b) + lgamma(m+b)
-  zibb.ans = sum( - log(pmax(1 - exp(logB - logA), .Machine$double.eps)) - logA + lgamma(m+1) +  # Prevent potential numerical underflow
-                    lgamma(y+a) + lgamma(m-y+b) + lgamma(a+b) - lgamma(y+1) -
-                    lgamma(m-y+1) - lgamma(a) )
+  is0 = (y.ori == 0)
+  out = numeric(length(y.ori))
+  
+  # y>0: log(1-pi) + log BB(y)
+  out[!is0] = log1p(-pi[!is0]) + lbb_y[!is0]
+  
+  # y==0: log( pi + (1-pi)*BB(0) ) with log-sum-exp
+  a1 = log(pi[is0])
+  a2 = log1p(-pi[is0]) + logP0[is0]
+  mx = pmax(a1, a2)
+  out[is0] = mx + log(exp(a1 - mx) + exp(a2 - mx))
+  zibb.ans = sum(out)
   
   return(list(bb.ans = bb.ans, zibb.ans = zibb.ans))
 }
@@ -2935,7 +3191,7 @@ AIGDM_GEE.Cluster <- function(ID, Y, Xa, Xb, X.index, W = NULL, model = "AZIGDM"
     }else{
       tmp.subset = sum(tmp.mean$stat.sum, tmp.disp$stat.sum)
     }
-
+    
     Nexc = Nexc + sum(tmp.subset >= stat.sum) # tmp.subset >= stat.sum
     stat.perm[m+1] = tmp.subset
     m = m + 1
@@ -10443,4 +10699,3 @@ QCAT_GEE.Cluster <- function(ID, OTU, OTU.base=NULL, X, X.index, Z, Z.index, Tax
   return(score.stat.alpha.perm)
   
 }
-
